@@ -1,0 +1,46 @@
+// One Worker per environment. Bindings are NOT inherited between environments,
+// so each env lists its own D1 database: staging can never see production data.
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  // Top level = local development (npm run start / npm run dev).
+  "name": "weall-local",
+  "compatibility_date": "2026-11-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": { "enabled": true },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "weall-local",
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "env": {
+    "staging": {
+      "name": "weall-staging",
+      "workers_dev": true,
+      "preview_urls": false,
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "weall-staging",
+          "database_id": "5c09a70a-d68c-4daa-81b4-c283bf38e7e7",
+          "migrations_dir": "migrations"
+        }
+      ]
+    },
+    "production": {
+      "name": "weall-prod",
+      "workers_dev": true,
+      "preview_urls": false,
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "weall-prod",
+          "database_id": "ae4a7263-624f-447c-8c07-04f26d3e4023",
+          "migrations_dir": "migrations"
+        }
+      ]
+    }
+  }
+}
