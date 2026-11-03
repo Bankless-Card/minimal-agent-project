@@ -105,6 +105,7 @@ A `doctor` twin in plain shell (`scripts/check.sh`, plus `check.ps1` for Windows
 ### Agent rules (AGENTS.md)
 
 - The client is non-technical; never ask them to use a terminal.
+- After every change, make sure the local preview is running and open the changed page in the browser for the client; never leave them without a way to see it.
 - Map requests to scripts: start/preview → `start`; ship it/send to staging → `ship`; get the latest → `sync`; undo → confirm, then `undo`.
 - Run `doctor` at the start of every session; if it fails, explain and stop.
 - Never install system tools (`sudo`, `brew`, `apt`, `winget`, `choco`, `nvm install`, `curl | sh`, `npm install -g`) or edit shell profiles. `npm ci` is allowed.

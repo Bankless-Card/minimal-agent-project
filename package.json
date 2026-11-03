@@ -12,14 +12,16 @@
     "preview": "astro preview",
     "astro": "astro",
     "deploy:staging": "node scripts/deploy.mjs staging",
-    "deploy:production": "node scripts/deploy.mjs production"
+    "deploy:production": "node scripts/deploy.mjs production",
+    "types": "wrangler types",
+    "db:migrate:local": "wrangler d1 migrations apply weall-local --local",
+    "db:seed:local": "wrangler d1 execute weall-local --local --file seed/0001_messages.sql"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^14.4.4",
     "astro": "^7.4.5"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^5.20261103.1",
     "typescript": "^7.0.2",
     "wrangler": "^4.157.0"
   },

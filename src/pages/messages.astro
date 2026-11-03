@@ -1,0 +1,44 @@
+---
+import Base from "../layouts/Base.astro";
+import { listMessages } from "../lib/db";
+
+const messages = await listMessages();
+---
+<Base title="Messages">
+  <h1>Messages</h1>
+
+  <form id="message-form">
+    <label>Name <input name="name" required maxlength="100" /></label>
+    <label>Message <textarea name="body" required maxlength="1000"></textarea></label>
+    <button type="submit">Send</button>
+    <p id="form-status" role="status"></p>
+  </form>
+
+  <ul id="message-list">
+    {messages.map((m) => (
+      <li>
+        <strong>{m.name}</strong>: {m.body}
+      </li>
+    ))}
+  </ul>
+</Base>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>("#message-form")!;
+  const status = document.querySelector<HTMLParagraphElement>("#form-status")!;
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    const data = Object.fromEntries(new FormData(form));
+    const res = await fetch("/api/messages", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data),
+    });
+    if (res.ok) {
+      location.reload();
+    } else {
+      status.textContent = (await res.json()).error ?? "Something went wrong.";
+    }
+  });
+</script>
