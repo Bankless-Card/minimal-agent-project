@@ -7,6 +7,7 @@
     "node": ">=24"
   },
   "scripts": {
+    "doctor": "node scripts/doctor.mjs",
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
