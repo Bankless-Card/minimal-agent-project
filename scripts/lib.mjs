@@ -102,14 +102,16 @@ export function unshippedCount() {
 }
 
 // Apply migrations to the local D1 database, then load every seed/*.sql file in order.
-export function setupLocalDatabase() {
-  const migrated = run("npx", ["wrangler", "d1", "migrations", "apply", "DB", "--local"]);
+// `persistTo` selects a different local database folder (used by the tests).
+export function setupLocalDatabase(persistTo) {
+  const where = ["--local", ...(persistTo ? ["--persist-to", persistTo] : [])];
+  const migrated = run("npx", ["wrangler", "d1", "migrations", "apply", "DB", ...where]);
   if (migrated.code !== 0) stop(`Couldn't set up the local database. ${CONTACT}\n\nDetails: ${migrated.out}`);
 
   const seedDir = join(ROOT, "seed");
   const seeds = existsSync(seedDir) ? readdirSync(seedDir).filter((f) => f.endsWith(".sql")).sort() : [];
   for (const file of seeds) {
-    const seeded = run("npx", ["wrangler", "d1", "execute", "DB", "--local", "--file", join("seed", file)]);
+    const seeded = run("npx", ["wrangler", "d1", "execute", "DB", ...where, "--file", join("seed", file)]);
     if (seeded.code !== 0) {
       stop(`Couldn't load sample data from seed/${file}. ${CONTACT}\n\nDetails: ${seeded.out}`);
     }
