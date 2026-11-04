@@ -1,0 +1,23 @@
+{
+  "name": "Protect deploy automation",
+  "target": "push",
+  "enforcement": "active",
+  "bypass_actors": [
+    { "actor_id": 5, "actor_type": "RepositoryRole", "bypass_mode": "always" }
+  ],
+  "rules": [
+    {
+      "type": "file_path_restriction",
+      "parameters": {
+        "restricted_file_paths": [
+          ".github/**/*",
+          "scripts/**/*",
+          "package.json",
+          "package-lock.json",
+          "astro.config.mjs",
+          "wrangler.jsonc"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+# The operator reviews every change to these before it reaches production.
+# Replace @almithani with the operator's GitHub username if it differs.
+# src/, seed/, tests/, TESTS.md and TODO.md are intentionally unowned.
+/AGENTS.md         @almithani
+/CLAUDE.md         @almithani
+/.agent/           @almithani
+/.claude/          @almithani
+/.github/          @almithani
+/scripts/          @almithani
+/migrations/       @almithani
+/astro.config.mjs  @almithani
+/wrangler.jsonc    @almithani
+/package.json      @almithani
