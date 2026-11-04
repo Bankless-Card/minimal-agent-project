@@ -1,6 +1,6 @@
 // Shared helpers for the npm scripts. Messages are written for non-technical clients.
 import { spawnSync } from "node:child_process";
-import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { copyFileSync, existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -116,4 +116,10 @@ export function setupLocalDatabase(persistTo) {
       stop(`Couldn't load sample data from seed/${file}. ${CONTACT}\n\nDetails: ${seeded.out}`);
     }
   }
+}
+
+// Local secrets live in .dev.vars (git-ignored). Create it from the example on first run.
+export function ensureDevVars() {
+  const devVars = join(ROOT, ".dev.vars");
+  if (!existsSync(devVars)) copyFileSync(join(ROOT, ".dev.vars.example"), devVars);
 }

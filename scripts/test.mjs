@@ -4,10 +4,11 @@
 // Tests get a fresh throwaway database in .wrangler/test-state, separate from the preview's.
 import { rmSync } from "node:fs";
 import { join } from "node:path";
-import { CONTACT, ROOT, run, say, setupLocalDatabase, stop } from "./lib.mjs";
+import { CONTACT, ROOT, ensureDevVars, run, say, setupLocalDatabase, stop } from "./lib.mjs";
 
 const TEST_STATE = join(".wrangler", "test-state");
 
+ensureDevVars();
 say("Preparing a fresh test database...");
 rmSync(join(ROOT, TEST_STATE), { recursive: true, force: true });
 setupLocalDatabase(TEST_STATE);
