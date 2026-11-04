@@ -108,6 +108,7 @@ A `doctor` twin in plain shell (`scripts/check.sh`, plus `check.ps1` for Windows
 - After every change, make sure the local preview is running and open the changed page in the browser for the client; never leave them without a way to see it.
 - Map requests to scripts: start/preview → `start`; ship it/send to staging → `ship`; get the latest → `sync`; undo → confirm, then `undo`.
 - Run `doctor` at the start of every session; if it fails, explain and stop.
+- Every public form (contact, sign-up, comments, …) must call `checkSubmission` from `src/lib/protect.ts` in its API route and include the Turnstile widget, so it gets spam protection and a per-visitor rate limit. Never add a form that writes to the database without it.
 - Never install system tools (`sudo`, `brew`, `apt`, `winget`, `choco`, `nvm install`, `curl | sh`, `npm install -g`) or edit shell profiles. `npm ci` is allowed.
 - Never run raw history-changing Git commands (`push --force`, `reset --hard`, `rebase`, checkout or commit to `main`).
 - Only edit files in `src/`, `migrations/`, `seed/`, `tests/`, TESTS.md, and TODO.md. Never edit a migration that already exists; add a new one.
@@ -130,6 +131,7 @@ A `doctor` twin in plain shell (`scripts/check.sh`, plus `check.ps1` for Windows
 - `npm run ship` applies pending migrations to the staging database before deploying staging.
 - Production migrations run only in the production deploy job, after operator approval and before the new code goes live.
 - Staging and production use separate D1 databases; staging never reads or writes production data.
+- Public forms are protected by Cloudflare Turnstile and a Workers rate-limit binding (`FORM_LIMITER`, 5 submissions per visitor per minute) through `src/lib/protect.ts`. Forms fail closed: without a Turnstile key, submissions are refused rather than accepted unprotected. On the free plan, abuse can't create a bill, but it can fill the site with spam or exhaust the daily D1 write limit.
 - Secrets (API keys for email, payments, etc.) are set with `wrangler secret put` per environment by the operator; locally they come from `.dev.vars`, which is git-ignored.
 
 ### Free-tier budget (per Cloudflare account)

@@ -1,5 +1,6 @@
 import type { APIRoute } from "astro";
 import { addMessage, listMessages } from "../../lib/db";
+import { checkSubmission } from "../../lib/protect";
 
 const MAX_NAME = 100;
 const MAX_BODY = 1000;
@@ -8,7 +9,7 @@ export const GET: APIRoute = async () => {
   return Response.json({ messages: await listMessages() });
 };
 
-export const POST: APIRoute = async ({ request }) => {
+export const POST: APIRoute = async ({ request, clientAddress }) => {
   let input: unknown;
   try {
     input = await request.json();
@@ -16,7 +17,11 @@ export const POST: APIRoute = async ({ request }) => {
     return Response.json({ error: "Request body must be JSON." }, { status: 400 });
   }
 
-  const { name, body } = (input ?? {}) as Record<string, unknown>;
+  const { name, body, turnstileToken } = (input ?? {}) as Record<string, unknown>;
+
+  const check = await checkSubmission(clientAddress, turnstileToken);
+  if (!check.ok) return Response.json({ error: check.error }, { status: check.status });
+
   if (typeof name !== "string" || typeof body !== "string") {
     return Response.json({ error: "Both name and body are required." }, { status: 400 });
   }

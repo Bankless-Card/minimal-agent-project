@@ -13,6 +13,8 @@ test("messages page shows seed data and accepts a new message", async ({ page })
   const body = `Hello from the page test ${Date.now()}`;
   await page.getByLabel("Name").fill("Page Test");
   await page.getByLabel("Message").fill(body);
+  // Wait for the Turnstile spam check (test keys always pass) to hand the form its token.
+  await expect(page.locator('[name="cf-turnstile-response"]')).not.toHaveValue("", { timeout: 15_000 });
   await page.getByRole("button", { name: "Send" }).click();
 
   await expect(page.getByText(body)).toBeVisible();
