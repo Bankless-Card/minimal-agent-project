@@ -230,7 +230,7 @@ AGENTS.md is guidance, not enforcement, so every important rule has a hard backs
 - [ ] A simulated merge conflict during `ship` leaves the working files unchanged and shows a plain-English message.
 - [ ] Each of Antigravity, Codex, and Claude Code, asked "ship it," runs `npm run ship` rather than raw Git commands.
 - [ ] An agent asked to fix a bug adds a test and a TESTS.md line.
-- [ ] An agent asked to add a field creates a new migration with an index rather than editing an old one.
+- [ ] An agent asked to add a field creates a new migration rather than editing an old one, with an index on any column it queries.
 
 ### Build order for Claude Code
 

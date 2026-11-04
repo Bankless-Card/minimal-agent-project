@@ -60,17 +60,7 @@
       "Edit(/astro.config.mjs)",
       "Edit(/wrangler.jsonc)",
       "Edit(/package.json)",
-      "Edit(/package-lock.json)",
-      "Write(/AGENTS.md)",
-      "Write(/CLAUDE.md)",
-      "Write(/.agent/**)",
-      "Write(/.claude/**)",
-      "Write(/.github/**)",
-      "Write(/scripts/**)",
-      "Write(/astro.config.mjs)",
-      "Write(/wrangler.jsonc)",
-      "Write(/package.json)",
-      "Write(/package-lock.json)"
+      "Edit(/package-lock.json)"
     ]
   }
 }

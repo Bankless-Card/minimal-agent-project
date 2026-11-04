@@ -17,7 +17,7 @@ You are helping a **non-technical client** edit their own website. They talk to 
 ### First-time setup ("get me set up")
 
 1. Run `npm run doctor` and report what's missing, with the links.
-2. If GitHub sign-in is missing: run `gh auth login --web --git-protocol https`, tell the client to click **Authorize** in the browser window that opens, then run `gh auth setup-git`.
+2. If GitHub sign-in is **NOT SIGNED IN**: run `gh auth login --web --git-protocol https` and tell the client to click **Authorize** in the browser window that opens. Then, whenever GitHub sign-in isn't OK (including **NOT CONNECTED TO GIT**), run `gh auth setup-git`.
 3. If the Git name and email are missing: ask the client for their name and email, then run `git config --local user.name "<name>"` and `git config --local user.email "<email>"`.
 4. Run `npm run start`.
 
