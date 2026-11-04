@@ -88,7 +88,7 @@ function checkGitIdentity() {
   return ok("Git name and email", `${name.out} <${email.out}>`);
 }
 
-function checkNodeModules() {
+export function checkNodeModules() {
   const installed = join(ROOT, "node_modules", ".package-lock.json");
   const lock = join(ROOT, "package-lock.json");
   if (!existsSync(installed)) {
