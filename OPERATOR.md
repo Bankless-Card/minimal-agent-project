@@ -12,6 +12,14 @@ Commands below use `OWNER/REPO` for the client's repo and `client` for the clien
   - Client editors are added as outside collaborators, which don't need paid seats.
 - The GitHub CLI, signed in as an org owner: `gh auth login`.
 
+## Using Claude Code yourself in a client repo
+
+The repo's `.claude/settings.json` holds the *client's* guardrails: it blocks raw `git push`/`commit`, edits to `scripts/`, `.github/` and other operator files, and Cloudflare commands. To work on those files with Claude Code as the operator, skip the project settings:
+
+```sh
+claude --setting-sources user,local
+```
+
 ## New-client checklist
 
 ### 1. Create the repo and the `staging` branch
