@@ -69,6 +69,11 @@ function checkGhAuth() {
   if (r.code !== 0) {
     return fail("GitHub sign-in", "NOT SIGNED IN. Ask your agent to sign you in to GitHub.");
   }
+  // Signed in to gh isn't enough: git must use that sign-in, or `npm run ship` can't send changes.
+  const helper = run("git", ["config", "--get-all", "credential.https://github.com.helper"]);
+  if (!/gh(\.exe)?["']? auth git-credential/.test(helper.out)) {
+    return fail("GitHub sign-in", "NOT CONNECTED TO GIT. Ask your agent to sign you in to GitHub.");
+  }
   return ok("GitHub sign-in", "signed in");
 }
 

@@ -55,5 +55,14 @@ jobs:
       - name: Apply database migrations
         run: npx wrangler d1 migrations apply DB --env "$TARGET" --remote
 
+      # Staging only: load sample data. Seed files use INSERT OR IGNORE, so this is safe to repeat.
+      - name: Load sample data
+        if: env.TARGET == 'staging'
+        run: |
+          for f in seed/*.sql; do
+            [ -e "$f" ] || continue
+            npx wrangler d1 execute DB --env staging --remote --file "$f"
+          done
+
       - name: Build and deploy
         run: node scripts/deploy.mjs "$TARGET"

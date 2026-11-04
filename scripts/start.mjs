@@ -14,6 +14,7 @@ import {
   hasChanges,
   pullLatest,
   run,
+  ensureDevVars,
   say,
   setupLocalDatabase,
   stop,
@@ -53,6 +54,7 @@ if (checkNodeModules().status !== "ok") {
 
 // 5. Local database: apply migrations, then load sample data.
 say("Setting up the local database...");
+ensureDevVars();
 setupLocalDatabase();
 
 // 6. Start the preview (or reuse one that's already running).

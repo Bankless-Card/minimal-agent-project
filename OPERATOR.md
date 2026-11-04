@@ -12,6 +12,14 @@ Commands below use `OWNER/REPO` for the client's repo and `client` for the clien
   - Client editors are added as outside collaborators, which don't need paid seats.
 - The GitHub CLI, signed in as an org owner: `gh auth login`.
 
+## Using Claude Code yourself in a client repo
+
+The repo's `.claude/settings.json` holds the *client's* guardrails: it blocks raw `git push`/`commit`, edits to `scripts/`, `.github/` and other operator files, and Cloudflare commands. To work on those files with Claude Code as the operator, skip the project settings:
+
+```sh
+claude --setting-sources user,local
+```
+
 ## New-client checklist
 
 ### 1. Create the repo and the `staging` branch
@@ -76,11 +84,20 @@ gh variable set SITE_URL --env production --body "https://client-prod.<subdomain
 
 Each environment only accepts deploys from its own branch. The token is stored only here, never in repo secrets or on client computers.
 
-### 5. Protect the staging site
+### 5. Switch on spam protection for forms
+
+Public forms refuse submissions until Turnstile is set up for that environment. In the client's Cloudflare account: **Turnstile → Add widget**, mode **Managed**, hostnames = the staging and production hostnames. Then:
+
+- Put the **site key** (public) in `wrangler.jsonc` as `TURNSTILE_SITE_KEY` under `env.staging.vars` and `env.production.vars`.
+- Store the **secret key**: `npx wrangler secret put TURNSTILE_SECRET_KEY --env staging`, then the same with `--env production`.
+
+The rate limit (5 submissions per visitor per minute) needs no setup. Local previews and tests use Cloudflare's always-pass test keys.
+
+### 6. Protect the staging site
 
 Once staging has its own hostname, add a Cloudflare Access application for `staging.<domain>` (Zero Trust → Access → Applications) with an **Allow** policy listing the client team's emails. (A `*.workers.dev` URL can be protected from the Worker's Settings → Domains & Routes instead.)
 
-### 6. Apply the rulesets
+### 7. Apply the rulesets
 
 ```sh
 gh api -X POST repos/OWNER/REPO/rulesets --input .github/rulesets/main.json
@@ -88,9 +105,11 @@ gh api -X POST repos/OWNER/REPO/rulesets --input .github/rulesets/protect-automa
 ```
 
 - **Protect main**: nobody but repo admins (you) can update `main`; changes arrive by PR, with CODEOWNERS review and passing tests. Admins bypass, so you can merge your own staging → main PR.
-- **Protect deploy automation**: pushes to *any* branch that change `.github/`, `scripts/`, `package.json`, `package-lock.json`, `astro.config.mjs` or `wrangler.jsonc` are rejected unless an admin pushes them. This matters because the staging deploy runs those files with a Cloudflare token that can reach the whole account, production included.
+- **Protect deploy automation** (private repos on Team/Enterprise only; GitHub doesn't allow push rules on public repos): pushes to *any* branch that change `.github/`, `scripts/`, `package.json`, `package-lock.json`, `astro.config.mjs` or `wrangler.jsonc` are rejected unless an admin pushes them. This matters because the staging deploy runs those files with a Cloudflare token that can reach the whole account, production included.
 
-### 7. Dry run
+**Known gap on public repos:** without that push ruleset, anyone with write access could push a changed workflow or script to `staging` and run it with the staging token, which can also reach production. The guards are the agent rules (never edit `.github/` or `scripts/`) and giving write access only to trusted client editors. **Private repos on the Free plan** lose more: no rulesets and no required reviewers at all, so keep client repos public or on a paid plan.
+
+### 8. Dry run
 
 1. On `staging`, change the home page heading and run `npm run ship -- "Dry run"`. Check the **Deploy** run in the Actions tab and the change on the staging URL.
 2. As a client editor (or with a test account with Write access), confirm `git push origin HEAD:main` is rejected.

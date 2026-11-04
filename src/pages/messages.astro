@@ -1,8 +1,10 @@
 ---
 import Base from "../layouts/Base.astro";
 import { listMessages } from "../lib/db";
+import { turnstileSiteKey } from "../lib/protect";
 
 const messages = await listMessages();
+const siteKey = turnstileSiteKey();
 ---
 <Base title="Messages">
   <h1>Messages</h1>
@@ -10,6 +12,7 @@ const messages = await listMessages();
   <form id="message-form">
     <label>Name <input name="name" required maxlength="100" /></label>
     <label>Message <textarea name="body" required maxlength="1000"></textarea></label>
+    {siteKey && <div class="cf-turnstile" data-sitekey={siteKey}></div>}
     <button type="submit">Send</button>
     <p id="form-status" role="status"></p>
   </form>
@@ -23,13 +26,21 @@ const messages = await listMessages();
   </ul>
 </Base>
 
+{siteKey && <script is:inline src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>}
+
 <script>
   const form = document.querySelector<HTMLFormElement>("#message-form")!;
   const status = document.querySelector<HTMLParagraphElement>("#form-status")!;
 
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
-    const data = Object.fromEntries(new FormData(form));
+    const fields = new FormData(form);
+    const data = {
+      name: fields.get("name"),
+      body: fields.get("body"),
+      // Turnstile adds this hidden field once the spam check passes.
+      turnstileToken: fields.get("cf-turnstile-response"),
+    };
     const res = await fetch("/api/messages", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -39,6 +50,8 @@ const messages = await listMessages();
       location.reload();
     } else {
       status.textContent = (await res.json()).error ?? "Something went wrong.";
+      // A Turnstile token works once; get a fresh one for the next try.
+      (window as unknown as { turnstile?: { reset: () => void } }).turnstile?.reset();
     }
   });
 </script>

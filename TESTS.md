@@ -9,3 +9,5 @@ Rules: one test per line, add new lines at the bottom, and never delete or weake
 - [auto] The messages API lists the sample messages. (tests/api.spec.ts)
 - [auto] The messages API saves a new message to the database. (tests/api.spec.ts)
 - [auto] The messages API rejects a message with a blank name. (tests/api.spec.ts)
+- [auto] The messages API rejects a submission that skipped the spam check. (tests/api.spec.ts)
+- [auto] The messages API stops a visitor after 5 submissions in a minute. (tests/api.spec.ts)
