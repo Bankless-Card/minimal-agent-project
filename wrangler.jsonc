@@ -1,0 +1,63 @@
+// One Worker per environment. Bindings are NOT inherited between environments,
+// so each env lists its own D1 database: staging can never see production data.
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  // Top level = local development (npm run start / npm run dev).
+  "name": "client-local",
+  "compatibility_date": "2026-11-01",
+  "compatibility_flags": ["nodejs_compat"],
+  "observability": { "enabled": true },
+  // Local only: Cloudflare's public always-pass Turnstile test site key. The matching
+  // test secret comes from .dev.vars. Staging/production set their own site key below
+  // and their secret with `wrangler secret put TURNSTILE_SECRET_KEY --env <name>`.
+  "vars": { "TURNSTILE_SITE_KEY": "1x00000000000000000000AA" },
+  // Public forms: at most 5 submissions per visitor per minute.
+  "ratelimits": [
+    { "name": "FORM_LIMITER", "namespace_id": "1001", "simple": { "limit": 5, "period": 60 } }
+  ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "client-local",
+      "database_id": "00000000-0000-0000-0000-000000000000",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "env": {
+    "staging": {
+      "name": "client-staging",
+      "workers_dev": true,
+      "preview_urls": false,
+      // Site key from Cloudflare dashboard → Turnstile (public; empty = form switched off).
+      "vars": { "TURNSTILE_SITE_KEY": "" },
+      "ratelimits": [
+        { "name": "FORM_LIMITER", "namespace_id": "1002", "simple": { "limit": 5, "period": 60 } }
+      ],
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "client-staging",
+          "database_id": "REPLACE_WITH_STAGING_DATABASE_ID",
+          "migrations_dir": "migrations"
+        }
+      ]
+    },
+    "production": {
+      "name": "client-prod",
+      "workers_dev": true,
+      "preview_urls": false,
+      "vars": { "TURNSTILE_SITE_KEY": "" },
+      "ratelimits": [
+        { "name": "FORM_LIMITER", "namespace_id": "1003", "simple": { "limit": 5, "period": 60 } }
+      ],
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "client-prod",
+          "database_id": "REPLACE_WITH_PRODUCTION_DATABASE_ID",
+          "migrations_dir": "migrations"
+        }
+      ]
+    }
+  }
+}

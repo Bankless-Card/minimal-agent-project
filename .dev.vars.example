@@ -1,0 +1,6 @@
+# Local-only settings for `npm run start` and `npm run test`. If .dev.vars is missing,
+# those scripts create it from this file. .dev.vars is git-ignored.
+# Real staging/production values are set by the operator with `wrangler secret put`.
+
+# Cloudflare's public always-pass Turnstile test secret (not a real secret).
+TURNSTILE_SECRET_KEY=1x0000000000000000000000000000000AA
