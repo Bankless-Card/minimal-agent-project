@@ -1,0 +1,4 @@
+# Normalize line endings in the repo; shell scripts must keep Unix line endings
+# or `sh` cannot run them on Mac/Linux (e.g. after an edit on Windows).
+* text=auto
+*.sh text eol=lf
