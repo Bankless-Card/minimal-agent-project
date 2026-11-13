@@ -14,7 +14,7 @@ Built on Astro + Cloudflare Workers + D1, on each client's free Cloudflare accou
 
 ### I'm the operator setting up a new client
 
-1. Click **Use this template** → **Create a new repository** (or `gh repo create OWNER/REPO --template Bankless-Card/client-site-starter`).
+1. Click **Use this template** → **Create a new repository** (or `gh repo create OWNER/REPO --template Bankless-Card/minimal-agent-project`).
 2. Follow the checklist in **[OPERATOR.md](OPERATOR.md)**: Cloudflare account and databases, GitHub Environments and token, Turnstile, rulesets, and a dry run.
 3. Send the client to SETUP.md.
 

@@ -25,7 +25,7 @@ claude --setting-sources user,local
 ### 1. Create the repo and the `staging` branch
 
 ```sh
-gh repo create OWNER/REPO --public --template Bankless-Card/client-site-starter --clone
+gh repo create OWNER/REPO --public --template Bankless-Card/minimal-agent-project --clone
 cd REPO
 git switch -c staging && git push -u origin staging
 ```

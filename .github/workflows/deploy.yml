@@ -23,7 +23,7 @@ jobs:
     name: Deploy ${{ github.ref_name == 'main' && 'production' || 'staging' }}
     needs: test
     # The template itself has no Cloudflare account: run its tests, never deploy it.
-    if: github.repository != 'Bankless-Card/client-site-starter'
+    if: github.repository != 'Bankless-Card/minimal-agent-project'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     # The Cloudflare token lives only in these GitHub Environments.
